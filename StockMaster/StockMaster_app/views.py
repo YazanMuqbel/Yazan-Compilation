@@ -246,4 +246,29 @@ def save_products(request):
                 return JsonResponse({'error': 'Error saving products: ' + str(e)}, status=500)
     except Exception as e:
         return JsonResponse({'error': 'Invalid request method'}, status=400)
+    
+
+# This function displays all products that exist in the db:
+def all_product(request):
+    user = check_session(request) 
+    context = {
+        'products' : Prodcut.objects.all(),
+        'user' : user, 
+    }
+    return render(request, 'all_product.html', context)
+
+# This function searches products in the db using their barcodes:
+def search(request):
+    search = request.POST['search']
+    search = int(search)
+    products = Prodcut.objects.all() #array 
+    product_list = []
+    for x in products: 
+        if search == x.p_barcode: 
+            product_list.append(x)
+    print(product_list)
+    context = {
+        'prod_search' : product_list, 
+    }
+    return render(request, 'all_product.html', context)
 

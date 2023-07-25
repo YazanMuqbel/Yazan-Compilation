@@ -30,7 +30,8 @@ urlpatterns = [
 ############################## Prodcut Part ###############################
     path('display_products/', views.display_products),
     path('save_products/', views.save_products, name='save_products'),
-
+    path('all_product/', views.all_product), 
+    path('search', views.search),
     
     
     ]

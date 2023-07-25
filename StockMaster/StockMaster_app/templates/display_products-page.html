@@ -57,18 +57,18 @@
     </script>
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
+
         <div class="d-flex align-items-center justify-content-between">
             <a href="#" class="logo d-flex align-items-center">
                 <img src="{% static 'img/logo.png' %}" alt="">
                 <span class="d-none d-lg-block">StockMaster</span>
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
-        </div>
-        <!-- End Logo -->
+        </div><!-- End Logo -->
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
-                </li>
-                <!-- End Notification Nav -->
+                </li><!-- End Notification Nav -->
+
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow Profile">
                     <li>
                         <hr class="dropdown-divider">
@@ -76,23 +76,22 @@
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                </ul>
-                <!-- End Profile Dropdown Items -->
+                </ul><!-- End Profile Dropdown Items -->
+
                 <li class="nav-item dropdown pe-3">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                        <span class="d-none d-md-block dropdown-toggle ps-2">{{user.f_name}} {{user.l_name}}</span>
-                    </a>
-                    <!-- End Profile Iamge Icon -->
+                        <span class="d-none d-md-block dropdown-toggle ps-2">{{user.f_name}}</span>
+                    </a><!-- End Profile Iamge Icon -->
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
-                            <h6>{{user.f_name}} {{user.l_name}}</h6>
-                            <span>General Manager</span>
+                            <h6></h6>
+                            <span>Admin</span>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="/dashboard/profile">
+                            <a class="dropdown-item d-flex align-items-center" href="/dashboard/profile/{{user.id}}">
                                 <i class="bi bi-person"></i>
                                 <span>My Profile</span>
                             </a>
@@ -101,20 +100,19 @@
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
+                            <a class="dropdown-item d-flex align-items-center" href="/logout_process">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Sign Out</span>
                             </a>
                         </li>
-                    </ul>
-                    <!-- End Profile Dropdown Items -->
-                </li>
-                <!-- End Profile Nav -->
+                    </ul><!-- End Profile Dropdown Items -->
+                </li><!-- End Profile Nav -->
             </ul>
-        </nav>
-        <!-- End Icons Navigation -->
-    </header>
+        </nav><!-- End Icons Navigation -->
+
+    </header><!-- End Header -->
     <!-- End Header -->
+    {% if user %}
     <!-- ======= Sidebar ======= -->
     <aside id="sidebar" class="sidebar">
         <ul class="sidebar-nav" id="sidebar-nav">
@@ -150,9 +148,9 @@
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="#">Home</a>
+                        <a href="/dashboard">Home</a>
                     </li>
-                    <li class="breadcrumb-item active">Products</li>
+                    <li class="breadcrumb-item active"><a href="/dashboard">Product</a></li>
                 </ol>
             </nav>
         </div>
@@ -160,7 +158,7 @@
         <section class="section dashboard">
             <div class="row">
                 <div class="col-sm-12">
-                    <form id="product_form" onsubmit= "return handleAddProductForm(event)">
+                    <form id="product_form" onsubmit="return handleAddProductForm(event)">
                         {% csrf_token %}
                         <!-- product Name  -->
                         <div class="row justify-content-center mb-3">
@@ -250,6 +248,9 @@
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
         <i class="bi bi-arrow-up-short"></i>
     </a>
+    {% else %}
+    <h1 class="text-danger" style="margin-top: 5rem;">Access Denied !! Please Sign in !!</h1>
+    {% endif %}
 </body>
 
 </html>
