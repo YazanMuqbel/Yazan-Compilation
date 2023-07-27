@@ -76,12 +76,24 @@
                                                 >
                                                 <div class="invalid-feedback">Please enter your password!</div>
                                             </div>
+                                            <!-- ERROR MESSAGE from email and pass validation -->
+                                            
+                                            {% if messages %}
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                    {% for message in messages %}
+                                                    <p> {% if message.tags %} {% endif %} {{ message }} </p>
+                                                    {% endfor %}
+                                                    
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+                                            {% endif %}
+                                            <!-- END OR ERROR MESSAGES -->
                                             <div class="col-12">
                                                 <button class="btn btn-primary w-100" type="submit">Login</button>
                                             </div>
                                             <div class="col-12">
                                                 <p class="small mb-0">Don't have account?
-                                                    <a href="pages-register.html">Create an account</a>
+                                                    <a href="/signup">Create an account</a>
                                                 </p>
                                             </div>
                                         </form>

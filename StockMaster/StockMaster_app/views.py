@@ -17,10 +17,10 @@ def homepage(request):
     return render(request, 'homepage.html')
 
 # This function displays all the info about a specific USER on a page with the corresponding ID
-def profile(request, id):
-    user = User.objects.get(id=id)
+def profile(request, user_id):
+    user = User.objects.get(pk=user_id)
     context = {
-        'user': user
+        'user_id': user_id,
     }
     return render(request, 'users-profile.html', context)
 
@@ -59,7 +59,7 @@ def register(request):
         s_name= request.POST['s_name'], 
         email=request.POST['email'], 
         password=request.POST['password'])
-        return render(request, 'pages-login.html')
+        return render(request, 'pages-login-2.html')
 
 #This function renders the Log In page upon button click
 def signin_page(request):
@@ -71,7 +71,7 @@ def login(request):
     if len(errors) > 0:
         for key, value in errors.items():
             messages.error(request, value)
-        return render(request, 'pages-login.html')
+        return render(request, 'pages-login-2.html')
     else:
         user = User.objects.get(email = request.POST['email'])
         request.session['user'] = user.id
@@ -96,21 +96,26 @@ def order_list_process(request):
     print("I entered this sction")
     try:
         if is_ajax(request = request) and request.method == "POST":
-            product = Prodcut.objects.get(p_barcode=request.POST['barcode'])
+            product = Prodcut.objects.filter(p_barcode=request.POST['barcode']).first()
             print(product)
             order_list_qty = request.POST['product_qty'] 
             order_list_price = request.POST['product_price'] 
+            barcode = product.p_barcode
+            print(barcode)
             Order_list.objects.create(p_price=order_list_price,
                                     qty_sell=order_list_qty,
-                                    products=product)
+                                    products=product.p_name,
+                                    p_barcode = barcode)
             return JsonResponse({'message': 'Success'})
     except:
         return JsonResponse({'message': 'Invalid request Bro'})
 
+
 def get_order_list(request):
-    order_list = Order_list.objects.all().values('id','p_price', 'qty_sell', 'products__p_name', 'products__p_barcode')
+    order_list = Order_list.objects.all().values('id','p_price', 'qty_sell', 'products', 'p_barcode')
 
     return JsonResponse({"order_list":list(order_list)})
+
 # Process: Delete
 def remove_order_list(request,order_id):
     order_list = Order_list.objects.get(id=order_id)
@@ -144,9 +149,10 @@ def save_product(request):
 def process_order(request):
     # Get the objects from the order_list
     order_list = Order_list.objects.all()
-    # Add the objects in the order_list to the order Table
+    # Add the objects in the order_list to the order Table*
+    user = User.objects.get(id=request.session['user'])
     for order in order_list:
-        Order.objects.create(p_price = order.p_price, qty_sell = order.qty_sell, products = order.products)
+        Order.objects.create(p_price = order.p_price, qty_sell = order.qty_sell, products = order.products ,p_barcode = order.p_barcode, user = user)
     # Delete the order_list items
     order_list_delete_all()
     return redirect('/order_page')
@@ -175,12 +181,33 @@ def check_session(request):
         user_session = False
     return user_session
 
+#--------------------------------- Kareem Update 3:-------------------------------
+# Process : Delete Product from the DB
+def remove_product_process(request,product_id):
+    product = Prodcut.objects.get(id=product_id)
+    product.delete()
+    return redirect('/dashboard')
+
+# Page: Display Orders Page
+def display_orders_page(request):
+    user = check_session(request)
+    if user:
+        orders=Order.objects.filter(user=user)
+    context = {
+        'orders' : orders,
+        'user' : user,
+    }
+    return render(request,'display_orders_page.html',context)
+
 
 # ********************* THIS IS THE CALCULATION PART ***************** #
 # This function displays the dashboard to the user with calculations functions:
 def dashboard(request):
     current_date = timezone.now().date()
-    products = Prodcut.objects.all()
+    #products = Prodcut.objects.all()
+    user = check_session(request)
+    if user:
+        products = Prodcut.objects.filter(user=user)
     warning_products = []
     
     # This part displays products that will expire in [10 days] or less as a warning on the Dashboard:
@@ -192,24 +219,47 @@ def dashboard(request):
     #This part calculates the total cost of all available stock
     products = Prodcut.objects.all()
     total_cost = 0
+    formatted_total_cost = '0'
 
     for product in products:
         total_cost += product.qty * product.cost
+        formatted_total_cost = "{:,.2f}".format(total_cost)
+
 
     #This part calculates the number of items in stock:
     products = Prodcut.objects.all()
+    orders = Order.objects.all()
+
     total_qty = 0
 
     for product in products:
         total_qty += product.qty
+
+    total_items_sold = 0
+
+    for order in orders:
+        total_qty -= order.qty_sell
+        total_items_sold += order.qty_sell
+
+    #This part calculates the total revenue from orders made in the past 30 days:
+    thirty_days_ago = timezone.now() - timedelta(days=30)
+    orders_last_30_days = Order.objects.filter(created_at__gte = thirty_days_ago)
+    totalValue_30days = 0
+    formatted_totalValue_30days = 0
+    
+    for order in orders_last_30_days:
+        totalValue_30days += order.totalValue
+        formatted_totalValue_30days = "{:,.2f}".format(totalValue_30days)
 
     user = check_session(request)
 
     context = {
         'products': warning_products,
         'user' : user,
-        'total_cost' : total_cost,
+        'formatted_total_cost' : formatted_total_cost,
         'total_qty': total_qty,
+        'total_items_sold' : total_items_sold,
+        'formatted_totalValue_30days' : formatted_totalValue_30days,
     } 
 
     return render(request, 'dashboard.html', context)
@@ -250,9 +300,11 @@ def save_products(request):
 
 # This function displays all products that exist in the db:
 def all_product(request):
-    user = check_session(request) 
+    user = check_session(request)
+    if user:
+        products = Prodcut.objects.filter(user=user) 
     context = {
-        'products' : Prodcut.objects.all(),
+        'products' : products,
         'user' : user, 
     }
     return render(request, 'all_product.html', context)

@@ -61,13 +61,13 @@
                                         <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
                                         <p class="text-center small">Enter your personal details to create account</p>
                                     </div>
-                                    <form action='/register' , method="POST" class="row g-3 needs-validation"
-                                        novalidate>
+                                    <form action='/register' , method="POST" class="row g-3 needs-validation" novalidate>
                                         {% csrf_token %}
                                         <!-- FIRST NAME-->
                                         <div class="col-12">
                                             <label for="yourEmail" class="form-label">Your First Name</label>
                                             <input type="text" name="f_name" class="form-control" id="f_name" required>
+                                            <!-- FIRST NAME ERROR -->
                                             <div class="invalid-feedback">First Name Should Contain 2 Characters at
                                                 least</div>
                                         </div>
@@ -112,24 +112,14 @@
                                             <div class="invalid-feedback">Passwords Don't Match</div>
                                         </div>
                                         <!-- END OF CONFIRM PASSWORD-->
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input class="form-check-input" name="terms" type="checkbox" value=""
-                                                    id="acceptTerms" required>
-                                                <label class="form-check-label" for="acceptTerms">
-                                                    I agree and accept the
-                                                    <a href="#">terms and conditions</a>
-                                                </label>
-                                                <div class="invalid-feedback">You must agree before submitting.</div>
-                                            </div>
-                                        </div>
+                                        
                                         <div class="col-12">
                                             <button class="btn btn-primary w-100" type="submit">Create Account</button>
                                         </div>
                                         <div class="col-12">
                                             <p class="small mb-0">
                                                 Already have an account?
-                                                <a href="pages-login.html">Log in</a>
+                                                <a href="/login">Log in</a>
                                             </p>
                                         </div>
                                     </form>

@@ -17,7 +17,7 @@ class UserManager(models.Manager):
         if User.objects.filter(email=postData['email']).exists():
             errors['email'] = "This email is already registered!"
         if len(postData['password'] or postData['password_conf']) < 8:
-            errors['password_len'] = "Password should atleast be 8 charecters"
+            errors['password_len'] = "Password should at least be 8 charecters"
         if postData['password'] != postData['password_conf']:
             errors['password_match'] = "Passwords do not match"
         return errors 
@@ -75,14 +75,25 @@ class Prodcut(models.Model):
 class Order(models.Model): 
     p_price = models.FloatField()
     qty_sell = models.IntegerField()
-    products = models.ForeignKey(Prodcut, on_delete=models.CASCADE, related_name='orders')
+    products = models.CharField(max_length=255)
+    p_barcode = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User,related_name='orders',on_delete=models.CASCADE)
+
+    @property
+    def totalValue(self):
+        return self.p_price * self.qty_sell
+    
+    def __str__(self):
+        return f"Order: {self.id} - Total Value: {self.totalValue}"
+        
 
 class Order_list(models.Model): 
     p_price = models.FloatField()
     qty_sell = models.IntegerField()
-    products = models.ForeignKey(Prodcut, on_delete=models.CASCADE, related_name='orders_list')
+    products = models.CharField(max_length=255)
+    p_barcode = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = ProdcutManager()

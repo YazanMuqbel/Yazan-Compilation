@@ -10,7 +10,7 @@ urlpatterns = [
     path('loging', views.login, name="loginProcess"),
     path('dashboard/', views.dashboard, name='dashboard'),
     #path('dashboard/soon_expired', views.soon_expired, name='dashboard'),
-    path('dashboard/profile/<int:id>/', views.profile, name='profile'),
+    path('dashboard/profile/<int:user_id>', views.profile, name='profile'),
     path('dashboard/products', views.prodcuts, name='products-page'),
     path('register', views.register, name='registrProcess'),
     path('loging', views.login, name="loginProcess"),
@@ -26,6 +26,9 @@ urlpatterns = [
     path('process_order', views.process_order, name="process_order"),
     path('clear_all_order_list_process', views.clear_all_order_list_process, name="clear_all_order_list_process"),
     path('logout_process', views.logout_process, name="logout_process"),
+# Kareem urls Update 3: Dahsboard Remove link
+    path('remove_product_process/<int:product_id>', views.remove_product_process, name="remove_product_process"),
+    path('display_orders_page', views.display_orders_page, name="display_orders_page"),
 
 ############################## Prodcut Part ###############################
     path('display_products/', views.display_products),

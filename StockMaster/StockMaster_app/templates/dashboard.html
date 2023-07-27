@@ -45,9 +45,12 @@
       text-align: center;
       color: red;
     }
+
+    .col-12 {
+    text-align: center;
+    }
   </style>
 </head>
-
 <body>
 
   <!-- ======= Header ======= -->
@@ -88,7 +91,7 @@
               <hr class="dropdown-divider">
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="/dashboard/profile" >
+              <a class="dropdown-item d-flex align-items-center" href="/dashboard/profile/{{ user_id }}" >
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -98,7 +101,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'SM_app:logout_process' %}">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -123,32 +126,34 @@
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
+        <a class="nav-link collapsed" href="/dashboard/profile">
           <i class="bi bi-person"></i>
           <span>Profile</span>
         </a>
       </li><!-- End Profile Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/dashboard/products">
-          <i class="bi bi-question-circle"></i>
-          <span>Products</span>
+        <a class="nav-link collapsed" href="/display_products">
+          <i class="bi bi-plus-circle"></i>
+          <span>Add Products</span>
         </a>
       </li><!-- End F.A.Q Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="customers-page.html">
-          <i class="bi bi-envelope"></i>
-          <span>Customers</span>
-        </a>
-      </li><!-- End Contact Page Nav -->
-
-      <li class="nav-item">
         <a class="nav-link collapsed" href="/order_page">
           <i class="bi bi-card-list"></i>
-          <span>Orders</span>
+          <span>Create Order</span>
         </a>
       </li><!-- End Orders Page Nav -->
+
+      <!-- Order History-->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'SM_app:display_orders_page' %}">
+          <i class="bi bi-book"></i>
+            <span>Order History</span>
+        </a>
+    </li>
+    <!-- End of Order History-->
 
     </ul>
 
@@ -170,21 +175,21 @@
       <div class="row">
 
         <!-- Left side columns -->
-        <div class="col-lg-8">
+        <!-- <div class="col-lg-8"> -->
           <div class="row">
 
             <!-- Sales Card -->
             <div class="col-xxl-4 col-md-6">
-              <div class="card info-card sales-card">
+              <div class="card info-card revenue-card">
                 <div class="card-body">
-                  <h5 class="card-title">Sales <span>| This Month</span></h5>
+                  <h5 class="card-title">Sales <span>| Items Sold This Month</span></h5>
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                       <i class="bi bi-cart"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>145</h6>
+                      <h6>{{total_items_sold}}</h6>
                     </div>
                   </div>
                 </div>
@@ -201,7 +206,7 @@
                       <i class="bi bi-currency-dollar"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>$3,264</h6>
+                      <h6> $ {{formatted_totalValue_30days}} </h6>
                     </div>
                   </div>
                 </div>
@@ -217,16 +222,19 @@
                       <i class="bi bi-currency-dollar"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>${{ total_cost }}</h6>
+                      <h6>$ {{ formatted_total_cost }}</h6>
                     </div>
                   </div>
                 </div>
               </div>
             </div><!-- End Inventory Card -->
           </div> <!-- END of FIRST ROW-->
+
+          <!-- SECOND ROW -->
+          <div class="row">
             <!-- Products Card -->
             <div class="col-xxl-4 col-xl-12">
-              <a href="#">
+              <a href="/all_product">
                 <div class="card info-card customers-card">
                   <div class="card-body">
                     <h5 class="card-title">Available Products</span></h5>
@@ -247,15 +255,15 @@
             <!-- Orders Card -->
             <div class="col-xxl-4 col-xl-12">
               <a href="/order_page">
-                <div class="card info-card customers-card">
+                <div class="card info-card sales-card">
                   <div class="card-body">
                     <h5 class="card-title">Create Order</span></h5>
                     <div class="d-flex align-items-center">
                       <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="bi bi-people"></i>
+                        <i class="bi bi-cart-plus-fill"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>1244</h6>
+                        <h6>Make a sale transaction</h6>
                       </div>
                     </div>
                   </div>
@@ -298,7 +306,7 @@
                             <td class="fw-bold">{{ product.qty }}</td>
                             <td class="fw-bold">{{ product.cost }}</td>
                             <td class="fw-bold">
-                                <a href="#">REMOVE</a>
+                              <a href="{% url 'SM_app:remove_product_process' product_id=product.id %}">REMOVE</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -335,7 +343,18 @@
   <!-- Template Main JS File -->
   <script src="{% static 'js/main.js' %}"></script>
   {% else %}
-  <h1 class="text-danger" style="margin-top: 5rem;">Access Denied !! Please Sign in !!</h1>
+  <h1 class="text-danger" style="margin-top: 5rem;">You need to log in to view this page</h1>
+  <div class="col-12">
+    <p class="small mb-0">Don't have account?
+        <a href="/signup">Create an account</a>
+    </p>
+</div>
+<div class="col-12">
+  <p class="small mb-0">
+      Already have an account?
+      <a href="/login">Log in</a>
+  </p>
+</div>
   {% endif %}
 </body>
 

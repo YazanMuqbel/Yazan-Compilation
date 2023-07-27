@@ -105,32 +105,34 @@
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/dashboard/profile">
+        <a class="nav-link collapsed" href="#">
           <i class="bi bi-person"></i>
           <span>Profile</span>
         </a>
       </li><!-- End Profile Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="/dashboard/products">
-          <i class="bi bi-question-circle"></i>
-          <span>Products</span>
+        <a class="nav-link collapsed" href="/display_products">
+          <i class="bi bi-plus-circle"></i>
+          <span>Add Products</span>
         </a>
       </li><!-- End F.A.Q Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="customers-page.html">
-          <i class="bi bi-envelope"></i>
-          <span>Customers</span>
-        </a>
-      </li><!-- End Contact Page Nav -->
-
-      <li class="nav-item">
         <a class="nav-link collapsed" href="/order_page">
           <i class="bi bi-card-list"></i>
-          <span>Orders</span>
+          <span>Create Order</span>
         </a>
       </li><!-- End Orders Page Nav -->
+
+      <!-- Order History-->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'SM_app:display_orders_page' %}">
+          <i class="bi bi-book"></i>
+            <span>Order History</span>
+        </a>
+    </li>
+    <!-- End of Order History-->
 
     </ul>
 
